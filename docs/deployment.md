@@ -3,6 +3,8 @@
 ## 구성
 
 - GitHub 저장소: https://github.com/ieesanggeon/hundred-year-forest
+- 공개 게임 주소: https://hundred-year-forest.vercel.app/
+- Vercel 프로젝트: `hundred-year-forest` / `ieesanggeon1`
 - 브랜치: `main`
 - 기술: Three.js, HTML/CSS, esbuild
 - Vercel 설치: `npm ci`
@@ -34,3 +36,9 @@ Windows 사용자는 기존 `run_game.bat`으로 게임을 실행할 수 있다.
 - Vercel 상태와 공개 주소의 HTTP 응답
 
 기존 Vercel 프로젝트별 대표 주소와 전체 배포 이력은 로컬 `.playtest/vercel-links.md`에 따로 정리한다.
+
+## 최초 배포 확인
+
+2026-11-19에 GitHub `main`을 Vercel과 연결하고 프로덕션 배포의 `READY` 상태를 확인했다. 공개 게임 주소는 로그인 없이 접근되며 시작 화면·컷신·스킵 후 레벨 1 HUD가 작동했다. 브라우저 실행 오류는 없었다. HTML·게임 번들·음원은 정상 응답하고 소스·촬영 경로는 404로 제외된다.
+
+Vercel이 생성하는 해시·브랜치별 미리보기 주소는 계정 로그인 보호가 적용될 수 있으므로 발표와 공유에는 위의 공개 게임 주소를 사용한다. 이후 GitHub `main`을 수정하면 Vercel이 자동으로 새 버전을 빌드한다.

@@ -2,6 +2,8 @@
 
 100년의 잠에서 깨어난 기사가 공주를 구하기 위해 잃어버린 힘을 되찾는 Three.js 기반 3D 액션 RPG 프로토타입입니다.
 
+**온라인 플레이:** [백년의 숲: 깨어난 기사](https://hundred-year-forest.vercel.app/) · [GitHub 저장소](https://github.com/ieesanggeon/hundred-year-forest)
+
 ## 실행 방법
 
 온라인 배포는 `npm ci` 후 `npm run build`로 생성되는 `web-dist` 폴더를 사용합니다. Vercel에서는 저장소를 가져오면 `vercel.json`의 설정으로 자동 빌드합니다. 게임 실행에 서버 기능이나 비밀 환경변수는 필요하지 않습니다. 촬영 영상·임시 도구·의존성 폴더는 Git 업로드와 웹 배포에서 제외합니다.
