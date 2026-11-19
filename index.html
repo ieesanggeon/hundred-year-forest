@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#13271d" />
+  <title>백년의 숲: 깨어난 기사</title>
+  <link rel="stylesheet" href="styles.css?v=princess-ending-1" />
+</head>
+<body>
+  <main id="game-shell">
+    <canvas id="game" width="1280" height="720" aria-label="백년의 숲 게임 화면"></canvas>
+    <div id="panorama-transition" class="panorama-transition" aria-hidden="true"></div>
+    <audio id="stage-one-music" src="assets/morning-at-forest-edge.mp3" preload="auto" loop></audio>
+    <audio id="stage-two-music" src="assets/poisoned-canopy.mp3" preload="auto" loop></audio>
+    <audio id="stage-three-music" src="assets/silent-ridge.mp3" preload="auto" loop></audio>
+    <audio id="stage-four-music" src="assets/crimson-sand.mp3" preload="auto" loop></audio>
+    <audio id="stage-five-music" src="assets/crown-of-sickly-glass.mp3" preload="auto" loop></audio>
+    <audio id="boss-battle-music" src="assets/sovereign-of-the-fallen-hall.mp3" preload="auto" loop></audio>
+    <audio id="level-up-sound" src="assets/level-up.mp3" preload="auto"></audio>
+    <audio id="monster-hit-sound" src="assets/monster-hit.mp3" preload="auto"></audio>
+    <audio id="guard-shot-sound" src="assets/guard-gunshot.mp3" preload="auto"></audio>
+    <audio id="boss-roar-sound" src="assets/boss-dinosaur-roar.mp3" preload="auto"></audio>
+    <audio id="boss-defeat-sound" src="assets/boss-victory.mp3" preload="auto"></audio>
+    <audio id="death-sound" src="assets/death.mp3" preload="auto"></audio>
+    <audio id="portal-open-sound" src="assets/portal-open.mp3" preload="auto"></audio>
+
+    <section id="hud" class="menu-hidden" aria-label="게임 상태">
+      <div class="brand"><span>백년의 숲</span><small>깨어난 기사</small></div>
+      <div class="minimap-frame"><canvas id="minimap" width="180" height="125" aria-label="플레이어와 몬스터 위치 미니맵"></canvas><small>초원의 숲</small></div>
+      <div class="level-medallion"><small>LEVEL</small><strong id="level">1</strong></div>
+      <div class="bars">
+        <div class="bar hp"><i id="hp-fill"></i><span id="hp-label">100 / 100</span></div>
+        <div class="bar exp"><i id="exp-fill"></i><span id="exp-label">EXP 0 / 100</span></div>
+      </div>
+      <div class="quest-card">
+        <small>현재 목표</small>
+        <strong id="quest-title">낯선 목소리를 들어보자</strong>
+        <span id="quest-detail">공주를 구하기 위한 첫걸음</span>
+      </div>
+      <div class="stats">
+        <span>⚔ <b id="attack-stat">4</b></span>
+        <span>🛡 <b id="defense-stat">0</b></span>
+        <span>✦ <b id="skill-points">0</b></span>
+      </div>
+      <div id="weapon-card" class="weapon-card"><small id="weapon-level">검 Lv.1 / 50</small><strong id="weapon-name">금 간 나뭇가지</strong></div>
+    </section>
+
+    <section id="skill-panel" class="panel hidden" aria-label="성장 스킬">
+      <header><div><small id="skill-kicker">성장의 기억</small><h2 id="skill-title">스킬 강화</h2></div><button id="close-skills" aria-label="닫기">×</button></header>
+      <p class="point-line">사용 가능한 포인트 <strong id="panel-points">0</strong></p>
+      <div class="skill-list">
+        <button class="skill" data-skill="attack"><i>⚔</i><span><b>검 강화</b><small id="attack-description">다음 검으로 진화 · 공격력 +12%</small></span><em id="attack-level">Lv.1</em></button>
+        <button class="skill" data-skill="exp"><i>✦</i><span><b>경험치 획득량</b><small id="exp-description">현재 1.00배 · 다음 보너스 +15%</small></span><em id="exp-level">0</em></button>
+        <button class="skill" data-skill="defense"><i>🛡</i><span><b>방어력</b><small>레벨마다 받는 피해 -8%</small></span><em id="defense-level">0</em></button>
+        <button class="skill" data-skill="maxHealth"><i>♥</i><span><b>최대 체력</b><small id="max-health-description">다음 강화 최대 체력 +10</small></span><em id="max-health-level">0</em></button>
+        <button class="skill" data-skill="health"><i>◉</i><span><b>생명 감지</b><small>1회 습득 · 몬스터 체력바 표시</small></span><em id="health-level">미습득</em></button>
+      </div>
+      <button id="defer-skills" class="defer-skills">다음에 정하기</button>
+      <p class="hint">레벨이 오를 때마다 스킬 포인트를 무작위로 1~4개 얻습니다.</p>
+    </section>
+
+    <section id="debug-console" class="debug-console hidden" aria-label="테스트 콘솔">
+      <header><div><small>DEVELOPER TOOL</small><h2>테스트 콘솔</h2></div><kbd>E</kbd></header>
+      <p>테스트할 성장 수치를 직접 설정합니다.</p>
+      <label><span>캐릭터 레벨</span><input id="debug-player-level" type="number" min="1" max="25" step="1" value="1"></label>
+      <label><span>검 레벨</span><input id="debug-sword" type="number" min="1" max="50" value="1"></label>
+      <label><span>방어력 레벨</span><input id="debug-defense" type="number" min="0" max="50" value="0"></label>
+      <label><span>경험치 획득 레벨</span><input id="debug-exp" type="number" min="0" max="50" value="0"></label>
+      <button id="apply-debug">테스트 수치 적용</button>
+      <button id="debug-stage-one" type="button">1스테이지로 이동</button>
+      <button id="debug-stage-two" type="button">2스테이지로 이동</button>
+      <button id="debug-stage-three" type="button">3스테이지로 이동</button>
+      <button id="debug-stage-four" type="button">4스테이지로 이동</button>
+      <button id="debug-stage-five" type="button">5스테이지 · 검은 성으로 이동</button>
+      <button id="debug-castle-hall" type="button">성 본관 입구로 이동 (테스트)</button>
+      <small class="debug-note">Enter로 적용 · E로 적용하고 닫기</small>
+    </section>
+
+    <section id="opening-cutscene" class="opening-cutscene hidden" aria-label="오프닝 이야기">
+      <div class="cinema-bar top"></div><div class="cinema-bar bottom"></div>
+      <div class="cutscene-vignette"></div>
+      <div class="cutscene-copy">
+        <small id="cutscene-kicker">100년 후</small>
+        <h2 id="cutscene-title">긴 잠의 끝</h2>
+        <p id="cutscene-text"></p>
+      </div>
+      <div class="cutscene-actions">
+        <button id="cutscene-next">계속 <kbd>Enter</kbd></button>
+        <button id="cutscene-skip">건너뛰기</button>
+      </div>
+    </section>
+
+    <section id="dialog" class="dialog hidden" role="dialog" aria-live="polite">
+      <div class="speaker" id="speaker">???</div>
+      <p id="dialog-text"></p>
+      <button id="dialog-next">계속 <kbd>Enter</kbd></button>
+    </section>
+
+    <section id="princess-ending" class="princess-ending hidden" role="dialog" aria-modal="true" aria-labelledby="princess-ending-speaker" aria-describedby="princess-ending-text">
+      <div class="cinema-bar top"></div><div class="cinema-bar bottom"></div>
+      <div class="princess-ending-card">
+        <small>백 년의 기다림 끝에</small>
+        <h2 id="princess-ending-speaker">공주</h2>
+        <p id="princess-ending-text" aria-live="polite"></p>
+        <button id="princess-return" type="button"><span id="princess-action-label">계속</span> <kbd>Enter</kbd></button>
+      </div>
+    </section>
+
+    <div id="prompt" class="prompt hidden"></div>
+    <div id="toast" class="toast hidden"></div>
+    <div id="crosshair" class="crosshair hidden" aria-hidden="true"><i></i><i></i></div>
+    <div id="sniper-warning" class="sniper-warning hidden">저격 조준 · 엄폐하거나 이동하세요</div>
+    <div id="shield-guard-vignette" aria-hidden="true"></div>
+    <div id="shield-status" class="shield-status hidden" role="status"><span id="shield-status-text">방어 중 · 최대 3초</span><div><i id="shield-time-fill"></i></div></div>
+    <div id="attack-charge" class="attack-charge" hidden aria-hidden="true">
+      <span class="attack-charge-track"><span class="attack-charge-fill"></span></span>
+    </div>
+    <div id="level-up" class="level-up hidden"><small>LEVEL UP</small><strong id="new-level">2</strong><span>새로운 기억이 깨어났습니다</span></div>
+    <section id="boss-introduction" class="boss-introduction hidden" aria-label="최종 보스 등장">
+      <div class="cinema-bar top"></div><div class="cinema-bar bottom"></div>
+      <div id="boss-intro-dialogue" class="boss-intro-dialogue">
+        <small id="boss-intro-speaker"></small>
+        <p id="boss-intro-text" aria-live="polite"></p>
+        <button id="boss-intro-next" type="button">계속 <kbd>Enter</kbd></button>
+      </div>
+      <div id="boss-intro-nameplate" class="boss-intro-nameplate hidden">
+        <small>검은 성의 마지막 왕관</small>
+        <h2 id="boss-intro-name"></h2>
+        <span>THE IVORY TYRANT</span>
+      </div>
+    </section>
+    <div id="boss-hud" class="boss-hud hidden"><small>백금의 폭군 아우렐리온</small><strong id="boss-action">공격의 빈틈을 노리세요</strong><div><i id="boss-hp-fill"></i><span id="boss-hp-label"></span></div></div>
+
+    <section id="castle-departure" class="overlay castle-departure hidden" role="dialog" aria-modal="true" aria-labelledby="castle-departure-title" aria-describedby="castle-departure-message castle-departure-subtitle castle-departure-status">
+      <div class="departure-card">
+        <small>100레벨 달성 · 마지막 여정</small>
+        <span class="departure-emblem" aria-hidden="true">♛</span>
+        <h2 id="castle-departure-title">공주를 구하러 갈 시간입니다</h2>
+        <p id="castle-departure-message">드디어 공주를 구하러 갈 수 있습니다.<br>Enter를 누르면 검은 성으로 향합니다.</p>
+        <p id="castle-departure-subtitle" class="departure-advice">충분한 체력과 강력한 무기를 준비한 후 출발하세요.</p>
+        <p id="castle-departure-status" class="departure-status" role="status">다리에서 시작해 성벽 길을 따라 정상 본관으로 올라갑니다.</p>
+        <div class="departure-actions">
+          <button id="castle-enter" type="button">성으로 향하기 <kbd>Enter</kbd></button>
+          <button id="castle-defer" type="button">더 준비하기</button>
+        </div>
+        <p class="departure-hint">더 준비하기로 닫은 뒤, 사막에서 Enter를 누르면 다시 열 수 있습니다.</p>
+      </div>
+    </section>
+
+    <section id="shield-tutorial" class="overlay shield-tutorial hidden" role="dialog" aria-modal="true" aria-labelledby="shield-tutorial-title">
+      <div class="shield-tutorial-card">
+        <small>새로운 장비 해금</small><span class="shield-tutorial-emblem" aria-hidden="true"><svg width="44" height="48" viewBox="0 0 44 48" fill="none"><path d="M5 5h34v20c0 9-10 16-17 20C15 41 5 34 5 25V5Z" fill="#a7d2e522" stroke="#d7b96b" stroke-width="2"/><path d="M22 10v26M12 20h20" stroke="#bdeaff" stroke-width="3"/><path d="m22 15 5 5-5 6-5-6 5-5Z" fill="#d7f4ff"/></svg></span>
+        <h2 id="shield-tutorial-title">성기사의 방패</h2>
+        <p>성의 수비병을 쓰러뜨리고 방패를 획득했습니다.</p>
+        <div class="shield-controls"><b>좌클릭 · 검 공격</b><b>우클릭 유지 · 정면 방어</b></div>
+        <p class="shield-tutorial-advice">한 번에 최대 <strong>3초</strong> 동안 막을 수 있습니다.<br>시간이 끝나면 강제로 해제됩니다.<br>우클릭을 놓았다가 다시 눌러 방어하세요.</p>
+        <p class="shield-tutorial-warning">등 뒤의 공격과 바닥에 표시되는 마법은 방패로 막을 수 없습니다.<br>공격하려면 우클릭을 놓으세요. 방어 중에는 이동이 느려집니다.</p>
+        <button id="shield-tutorial-close" type="button">방패를 든다 <kbd>Enter</kbd></button>
+      </div>
+    </section>
+    <section id="death" class="overlay hidden">
+      <div><small>쓰러졌습니다</small><h2>아직 운명이 끝나지 않았습니다</h2><p>획득한 레벨과 스킬은 유지됩니다.</p><button id="revive">숲의 제단에서 다시 일어나기</button></div>
+    </section>
+
+    <section id="pause-screen" class="overlay hidden">
+      <div><small>PAUSED</small><h2>여정이 잠시 멈췄습니다</h2><p>준비가 되면 다시 숲으로 돌아가세요.</p><button id="resume-button">계속하기</button></div>
+    </section>
+
+    <section id="start-screen" class="overlay">
+      <div class="start-card">
+        <small>CHAPTER I</small><h1>백년의 숲</h1><p>깨어난 기사</p>
+        <button id="start-button">눈을 뜬다</button>
+        <div class="controls"><span><kbd>WASD</kbd> 이동</span><span><kbd>Shift</kbd> 달리기</span><span><kbd>Space</kbd> 점프</span><span><kbd>좌클릭</kbd> 공격</span><span><kbd>우클릭</kbd> 방패 (획득 후)</span><span><kbd>F</kbd> 상호작용</span><span><kbd>K</kbd> 스킬</span><span><kbd>E</kbd> 테스트 콘솔</span><span><kbd>C</kbd> 시점 전환</span><span><kbd>Esc</kbd> 일시정지</span></div>
+      </div>
+    </section>
+  </main>
+  <script defer src="dist/game.bundle.js?v=princess-dialogue-steps-1"></script>
+</body>
+</html>

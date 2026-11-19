@@ -1,0 +1,7 @@
+.git/
+.playtest/
+node_modules/
+web-dist/
+.env
+.env.*
+*.log

@@ -1,0 +1,11 @@
+node_modules/
+.playtest/
+web-dist/
+.vercel/
+.codex/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db

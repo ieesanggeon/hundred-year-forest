@@ -157,4 +157,3 @@
 
 `src/game.js`를 수정한 뒤에는 프로젝트 폴더에서 `npm run build`를 실행하면 `dist/game.bundle.js`가 갱신됩니다. 일반 플레이에는 이 과정이 필요하지 않습니다.
 
-

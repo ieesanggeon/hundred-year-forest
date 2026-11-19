@@ -1,0 +1,19 @@
+{
+  "name": "hundred-year-forest",
+  "version": "0.2.0",
+  "private": true,
+  "description": "백년의 숲 Three.js 3D 액션 RPG 프로토타입",
+  "scripts": {
+    "build": "node scripts/build-web.cjs",
+    "test": "node tests/stage-three.cjs",
+    "test:combat:browser": "node tests/browser-castle-combat.cjs",
+    "test:ending:browser": "node tests/browser-princess-ending.cjs",
+    "test:launcher": "node tests/launcher.cjs"
+  },
+  "dependencies": {
+    "three": "^0.181.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.0"
+  }
+}
